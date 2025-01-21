@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using FraudDetection_21_01.Entities;
+using System.Collections.Generic;
 using System.Numerics;
 
 Console.Write("Set number of orders to deal with: ");
@@ -33,37 +34,45 @@ foreach (string input in inputs)
         });    
 }
 
-string[] streets = { "St. Example", "Street Example", "Another Street" };
+string streets = "St.";
 string target = "street";
 
-List<Order> idOrdersFraudulent = null;
+List<Order> fraudulentOrders = null;
+
 foreach (var order in orders)
 {
-    if (idOrdersFraudulent == null)
+    if (fraudulentOrders == null)
     {
         //Check for same Deal and address
-        idOrdersFraudulent = orders.Where(o =>
+        List<Order> ordersFound= orders.Where(o =>
                 (o.DealId == order.DealId && o.Email.ToLower() == order.Email.ToLower())
                 ||
                 (o.DealId == order.DealId && o.Address.ToLower() == order.Address.ToLower() && o.City.ToLower() == order.City.ToLower() && o.State.ToLower() == order.State.ToLower() && o.Zip == order.Zip && o.CreditCard != order.CreditCard)
                 ).ToList();
+        if (ordersFound.Count() != 1) {
+            fraudulentOrders = ordersFound;
+        }
     }
-    else if(!idOrdersFraudulent.Contains(order))
+    else if(!fraudulentOrders.Contains(order))
     {
-        idOrdersFraudulent.AddRange( orders.Where(o =>
+        List<Order> ordersFound = orders.Where(o =>
                 (o.DealId == order.DealId && o.Email.ToLower() == order.Email.ToLower())
                 ||
                 (o.DealId == order.DealId && o.Address.ToLower() == order.Address.ToLower() && o.City.ToLower() == order.City.ToLower() && o.State.ToLower() == order.State.ToLower() && o.Zip == order.Zip && o.CreditCard != order.CreditCard)
-                ).ToList());
+                ).ToList();
+        if (ordersFound.Count() != 1)
+        {
+            fraudulentOrders = ordersFound;
+        }
     }
 
 }
 
 
 
-if (idOrdersFraudulent != null)
+if (fraudulentOrders != null)
 {
-    foreach (Order order in idOrdersFraudulent)
+    foreach (Order order in fraudulentOrders)
     {
         Console.WriteLine(order.Id);
     }
