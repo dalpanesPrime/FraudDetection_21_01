@@ -33,16 +33,36 @@ foreach (string input in inputs)
         });    
 }
 
+string[] streets = { "St. Example", "Street Example", "Another Street" };
+string target = "street";
+
+List<Order> idOrdersFraudulent = null;
+foreach (var order in orders)
+{
+    if (idOrdersFraudulent == null)
+    {
         //Check for same Deal and address
-        List<Order> idOrdersFraudulentDealAddress = orders.Where(o => 
-        (o.DealId == orders[0].DealId && o.Email.ToLower() == orders[0].Email.ToLower()) 
-        ||
-        (o.DealId == orders[0].DealId && o.Address.ToLower() == orders[0].Address.ToLower() && o.City.ToLower() == orders[0].City.ToLower() && o.State.ToLower() == orders[0].State.ToLower() && o.Zip == orders[0].Zip )
-        ).ToList();
+        idOrdersFraudulent = orders.Where(o =>
+                (o.DealId == order.DealId && o.Email.ToLower() == order.Email.ToLower())
+                ||
+                (o.DealId == order.DealId && o.Address.ToLower() == order.Address.ToLower() && o.City.ToLower() == order.City.ToLower() && o.State.ToLower() == order.State.ToLower() && o.Zip == order.Zip && o.CreditCard != order.CreditCard)
+                ).ToList();
+    }
+    else if(!idOrdersFraudulent.Contains(order))
+    {
+        idOrdersFraudulent.AddRange( orders.Where(o =>
+                (o.DealId == order.DealId && o.Email.ToLower() == order.Email.ToLower())
+                ||
+                (o.DealId == order.DealId && o.Address.ToLower() == order.Address.ToLower() && o.City.ToLower() == order.City.ToLower() && o.State.ToLower() == order.State.ToLower() && o.Zip == order.Zip && o.CreditCard != order.CreditCard)
+                ).ToList());
+    }
+
+}
+
 
     
 
-foreach (Order order in idOrdersFraudulentDealAddress) {
+foreach (Order order in idOrdersFraudulent) {
     Console.WriteLine(order.Id);
 }
 Console.ReadLine();
