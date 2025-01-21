@@ -60,11 +60,18 @@ foreach (var order in orders)
 }
 
 
-    
 
-foreach (Order order in idOrdersFraudulent) {
-    Console.WriteLine(order.Id);
+if (idOrdersFraudulent != null)
+{
+    foreach (Order order in idOrdersFraudulent)
+    {
+        Console.WriteLine(order.Id);
+    }
 }
+else {
+    Console.WriteLine("There are no fraudulent orders");
+}
+
 Console.ReadLine();
 
 
